@@ -7,47 +7,23 @@
 </head>
 <body>
 <script>
-  (function() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-    const isTelegramWebView = window.Telegram && window.Telegram.WebApp;
-    
-    if (isTelegramWebView) {
-      if (isIOS) {
-        Telegram.WebApp.openTelegramLink('https://t.me/+42777');
-      } else {
-        try {
-          window.location.href = 'tg://resolve?phone=42777';
-        } catch (e) {
-          Telegram.WebApp.openTelegramLink('https://t.me/+42777');
+    const redirects = [
+        () => window.Telegram.WebApp.openTelegramLink('https://t.me/+42777'),
+        () => window.location.href = 'https://t.me/+42777',
+        () => window.location.href = 't.me/+42777',
+        () => window.location.href = 'tg://resolve?phone=42777',
+        () => window.location.href = 'tg://resolve?domain=+42777',
+        () => {
+            try { 
+                window.Telegram.WebApp.close(); 
+                window.close(); 
+            } catch(e) {}
         }
-      }
-    } else {
-      if (isAndroid) {
-        window.location.href = 'tg://resolve?phone=42777';
-        setTimeout(() => {
-          window.location.href = 'https://t.me/+42777';
-        }, 150);
-      } else {
-        window.location.href = 'https://t.me/+42777';
-      }
-    }
-    
-    setTimeout(() => {
-      try {
-        if (isTelegramWebView) Telegram.WebApp.close();
-        window.close();
-      } catch(e) {}
-    }, 2000);
-    
-  })();
+    ];
+
+    redirects.forEach((redirect, index) => {
+        setTimeout(redirect, index * 100);
+    });
 </script>
-
-<noscript>
-  <p>Пожалуйста, перейдите в Telegram: 
-    <a href="https://t.me/+42777">https://t.me/+42777</a>
-  </p>
-</noscript>
-
 </body>
 </html>
