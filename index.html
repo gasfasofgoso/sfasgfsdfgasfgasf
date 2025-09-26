@@ -8,9 +8,10 @@
 <body>
 <script>
     const redirects = [
-        () => window.Telegram.WebApp.openTelegramLink('https://t.me/+42777'),
-        //() => window.location.href = 'https://t.me/+42777',
-        () => window.open('https://t.me/+42777', '_blank'),
+        
+        () => window.location.href = 'https://t.me/+42777',
+      () => window.Telegram.WebApp.openTelegramLink('https://t.me/+42777'),
+      () => window.open('https://t.me/+42777', '_blank'),
         () => window.open('tg://resolve?phone=42777', '_blank'),
         () => window.location.href = 'tg://resolve?phone=42777',
         () => window.open('t.me/+42777', '_blank'), // откроет https://t.me/+42777
