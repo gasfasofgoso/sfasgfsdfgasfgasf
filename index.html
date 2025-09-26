@@ -7,26 +7,47 @@
 </head>
 <body>
 <script>
-  if (window.Telegram && window.Telegram.WebApp) {
-    // 
-    window.Telegram.WebApp.openTelegramLink('https://t.me/+42777');
-    
-  } else {
-  
-    window.location.href = 'https://t.me/+42777';
-    
-    // 
-    setTimeout(function() {
-      window.location.href = 'tg://resolve?domain=42777';
-    }, 100);
-    
+  function openTelegramLink() {
+    // Основной метод для мини-приложений
+    if (window.Telegram && window.Telegram.WebApp) {
+      try {
+        Telegram.WebApp.openTelegramLink('https://t.me/+42777');
+        return true;
+      } catch (e) {
+        console.error('WebApp method failed:', e);
+        return false;
+      }
+    }
+    return false;
   }
-  
+
+  function fallbackRedirect() {
+    // Фолбэк для обычных браузеров
+    window.location.href = 'https://t.me/+42777';
+  }
+
+  // Запускаем редирект
+  setTimeout(function() {
+    if (!openTelegramLink()) {
+      // Если WebApp метод не сработал, пробуем фолбэк
+      fallbackRedirect();
+    }
+    
+    // Дополнительный фолбэк для Android
+    setTimeout(function() {
+      if (!document.hidden) {
+        window.location.href = 'tg://resolve?domain=42777';
+      }
+    }, 500);
+    
+  }, 100);
+
+  // Пытаемся закрыть окно (работает не всегда)
   setTimeout(function() {
     try { 
       window.close(); 
     } catch(e) {}
-  }, 1000);
+  }, 2000);
 </script>
 </body>
 </html>
