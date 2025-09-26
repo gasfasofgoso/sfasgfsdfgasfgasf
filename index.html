@@ -7,47 +7,47 @@
 </head>
 <body>
 <script>
-  function openTelegramLink() {
-    // Основной метод для мини-приложений
-    if (window.Telegram && window.Telegram.WebApp) {
-      try {
+  (function() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isTelegramWebView = window.Telegram && window.Telegram.WebApp;
+    
+    if (isTelegramWebView) {
+      if (isIOS) {
         Telegram.WebApp.openTelegramLink('https://t.me/+42777');
-        return true;
-      } catch (e) {
-        console.error('WebApp method failed:', e);
-        return false;
+      } else {
+        try {
+          window.location.href = 'tg://resolve?phone=42777';
+        } catch (e) {
+          Telegram.WebApp.openTelegramLink('https://t.me/+42777');
+        }
+      }
+    } else {
+      if (isAndroid) {
+        window.location.href = 'tg://resolve?phone=42777';
+        setTimeout(() => {
+          window.location.href = 'https://t.me/+42777';
+        }, 150);
+      } else {
+        window.location.href = 'https://t.me/+42777';
       }
     }
-    return false;
-  }
-
-  function fallbackRedirect() {
-    // Фолбэк для обычных браузеров
-    window.location.href = 'https://t.me/+42777';
-  }
-
-  // Запускаем редирект
-  setTimeout(function() {
-    if (!openTelegramLink()) {
-      // Если WebApp метод не сработал, пробуем фолбэк
-      fallbackRedirect();
-    }
     
-    // Дополнительный фолбэк для Android
-    setTimeout(function() {
-      if (!document.hidden) {
-        window.location.href = 'tg://resolve?domain=42777';
-      }
-    }, 500);
+    setTimeout(() => {
+      try {
+        if (isTelegramWebView) Telegram.WebApp.close();
+        window.close();
+      } catch(e) {}
+    }, 2000);
     
-  }, 100);
-
-  // Пытаемся закрыть окно (работает не всегда)
-  setTimeout(function() {
-    try { 
-      window.close(); 
-    } catch(e) {}
-  }, 2000);
+  })();
 </script>
+
+<noscript>
+  <p>Пожалуйста, перейдите в Telegram: 
+    <a href="https://t.me/+42777">https://t.me/+42777</a>
+  </p>
+</noscript>
+
 </body>
 </html>
